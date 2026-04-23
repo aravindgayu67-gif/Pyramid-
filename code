@@ -1,0 +1,48 @@
+import cv2
+import matplotlib.pyplot as plt
+
+# ---------- Step 1: Read Image ----------
+# TODO: Upload your image file to the Colab environment (e.g., to /content/your_image_name.jpg)
+#       and replace 'your_image_name.jpg' with the actual filename.
+img = cv2.imread("/content/asim .jpeg")
+
+# ☢☢ Safety check (most common error fix)
+if img is None:
+    raise FileNotFoundError("Image not found. Check file name or path.")
+
+# Convert BGR to RGB
+img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+# ---------- Step 2: Generate Pyramid Levels ----------
+level1 = cv2.pyrDown(img)
+level2 = cv2.pyrDown(level1)
+level3 = cv2.pyrDown(level2)
+
+images = [img, level1, level2, level3]
+titles = ["Level 0 (Original)", "Level 1", "Level 2", "Level 3"]
+
+# ---------- Step 3: Display Pyramid Images ----------
+plt.figure(figsize=(10, 6))
+for i in range(4):
+    plt.subplot(2, 2, i + 1)
+    plt.imshow(images[i])
+    plt.title(titles[i])
+    plt.axis("off")
+
+plt.tight_layout()
+plt.show()
+
+# ---------- Step 4: Print Image Sizes ----------
+for i, im in enumerate(images):
+    print(f"Level {i} image size: {im.shape}")
+
+# ---------- Step 5: Edge Detection at Each Level ----------
+for i, im in enumerate(images):
+    gray = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
+    edges = cv2.Canny(gray, 100, 200)
+
+    plt.figure(figsize=(4, 4))
+    plt.imshow(edges, cmap="gray")
+    plt.title(f"Edges at Pyramid Level {i}")
+    plt.axis("off")
+    plt.show()
